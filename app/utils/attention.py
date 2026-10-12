@@ -20,7 +20,7 @@ def _resize_gray_float(arr: np.ndarray, size: tuple) -> np.ndarray:
 
 def render_attention_grid(raw_img: np.ndarray, attn_cls: np.ndarray, h_feat: int, w_feat: int) -> bytes:
     """
-    Renders a matplotlib grid showing per-head attention overlays.
+    Renders a matplotlib grid showing per-head attention overlays on a white background.
     Returns the rendered image as a PNG byte string.
     
     raw_img: [H, W, 3] float 0-1
@@ -41,15 +41,21 @@ def render_attention_grid(raw_img: np.ndarray, attn_cls: np.ndarray, h_feat: int
     num_cols = min(6, num_heads + 3)
     num_rows = (num_heads + 3 + num_cols - 1) // num_cols
     
-    fig, axes = plt.subplots(num_rows, num_cols, figsize=(3 * num_cols, 3 * num_rows))
+    fig, axes = plt.subplots(
+        num_rows,
+        num_cols,
+        figsize=(3 * num_cols, 3 * num_rows),
+        facecolor='white',
+    )
     axes = axes.flatten() if num_rows * num_cols > 1 else [axes]
     
     for ax in axes:
         ax.axis('off')
+        ax.set_facecolor('white')
         
     # 1. Original Image
     axes[0].imshow(raw_img_disp)
-    axes[0].set_title("Original", fontsize=10)
+    axes[0].set_title("Original", fontsize=11, fontweight='bold', color='#0f172a')
     
     # 2. Aggregate Attention (Sum of all heads)
     attn_agg = attn_cls.sum(axis=0) # [H, W]
@@ -59,7 +65,7 @@ def render_attention_grid(raw_img: np.ndarray, attn_cls: np.ndarray, h_feat: int
     
     axes[1].imshow(raw_img_disp)
     axes[1].imshow(attn_agg_resized, cmap='inferno', alpha=0.6)
-    axes[1].set_title("Aggregate Attention", fontsize=10)
+    axes[1].set_title("Aggregate Attention", fontsize=11, fontweight='bold', color='#0f172a')
     
     # 3. Average CLS Attention (Mean of all heads)
     attn_avg = attn_cls.mean(axis=0)
@@ -69,7 +75,7 @@ def render_attention_grid(raw_img: np.ndarray, attn_cls: np.ndarray, h_feat: int
     
     axes[2].imshow(raw_img_disp)
     axes[2].imshow(attn_avg_resized, cmap='inferno', alpha=0.6)
-    axes[2].set_title("CLS Token Avg", fontsize=10)
+    axes[2].set_title("CLS Token Avg", fontsize=11, fontweight='bold', color='#0f172a')
     
     # 4. Per-head attention
     for i in range(num_heads):
@@ -81,12 +87,12 @@ def render_attention_grid(raw_img: np.ndarray, attn_cls: np.ndarray, h_feat: int
         
         axes[ax_idx].imshow(raw_img_disp)
         axes[ax_idx].imshow(head_attn_resized, cmap='inferno', alpha=0.6)
-        axes[ax_idx].set_title(f"Head {i}", fontsize=10)
+        axes[ax_idx].set_title(f"Head {i}", fontsize=11, fontweight='bold', color='#0f172a')
         
     plt.tight_layout()
     
     buf = io.BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', dpi=150, facecolor='#1e293b')
+    plt.savefig(buf, format='png', bbox_inches='tight', dpi=150, facecolor='white', edgecolor='none')
     plt.close(fig)
     
     return buf.getvalue()
