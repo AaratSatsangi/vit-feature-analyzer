@@ -1,0 +1,20 @@
+[project]
+name = "vit-feature-analyzer"
+version = "0.1.0"
+description = "Interactive desktop studio for visualizing and analyzing Vision Transformer (ViT) patch representations, PCA feature maps, cosine similarities, and self-attention heads."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "numpy>=2.4.6",
+    "pillow>=12.3.0",
+    "pyqt5>=5.15.11",
+    "pyyaml>=6.0.3",
+    "termcolor>=3.3.0",
+    "torch>=2.14.1",
+    "torchmetrics>=1.9.0",
+    "torchvision>=0.29.1",
+]
+
+[project.scripts]
+vit-feature-analyzer = "app.__main__:main"
